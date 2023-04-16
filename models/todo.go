@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Todo struct {
 	ID        uint      `json:"id" gorm:"primary_key"`

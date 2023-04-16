@@ -32,7 +32,7 @@ func CreateTodo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, todo)
+	c.JSON(http.StatusCreated, todo)
 }
 
 func GetTodo(c *gin.Context) {

@@ -24,5 +24,5 @@ func Connect() {
 	}
 
 	// Migrate the schema
-	Context.AutoMigrate(&models.Todo{})
+	Context.AutoMigrate(&models.User{}, &models.Role{}, &models.UserRole{}, &models.Todo{})
 }
