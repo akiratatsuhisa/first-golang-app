@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/akiratatsuhisa/first-golang-app/auth"
+	"github.com/akiratatsuhisa/first-golang-app/lib/auth"
 	"github.com/gin-gonic/gin"
 )
 
