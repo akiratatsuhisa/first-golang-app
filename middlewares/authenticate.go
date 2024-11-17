@@ -9,13 +9,11 @@ func Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 
-		if user, ok := auth.ParseJwtToken(authHeader); ok {
-			c.Set("User", user)
-			c.Set("IsAuthenticated", true)
-
-		} else {
+		if user, err := auth.ParseJwtToken(authHeader); err != nil {
 			c.Set("IsAuthenticated", false)
-
+		} else {
+			c.Set("User", &user)
+			c.Set("IsAuthenticated", true)
 		}
 		c.Next()
 	}

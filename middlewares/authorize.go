@@ -34,7 +34,6 @@ func AuthorizeRoles(roles []string) gin.HandlerFunc {
 		}
 
 		valid := false
-
 		for _, role := range user.Roles {
 			if hash[role] {
 				valid = true

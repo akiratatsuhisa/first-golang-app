@@ -12,7 +12,10 @@ import (
 var digits int = 8
 
 func GenerateUri(username string) (string, string) {
-	issuer, _ := os.LookupEnv("ISSUER")
+	issuer := "App"
+	if value, exists := os.LookupEnv("ISSUER"); !exists {
+		issuer = value
+	}
 
 	url := otpauth.URL{
 		Type:    "totp",
@@ -21,12 +24,14 @@ func GenerateUri(username string) (string, string) {
 		Digits:  digits,
 	}
 
-	length, _ := os.LookupEnv("ISSUER")
+	length := "20"
+	if value, exists := os.LookupEnv("TOTP_SECRET_LENGTH"); !exists {
+		length = value
+	}
 
-	size, error := strconv.Atoi(length)
-
-	if error != nil {
-		size = 20
+	size := 20
+	if value, error := strconv.Atoi(length); error != nil {
+		size = value
 	}
 
 	randomKey := make([]byte, size)
@@ -43,7 +48,9 @@ func CompareOtp(key string, compareOtp string) bool {
 		Digits: digits,
 	}
 
-	config.ParseKey(key)
+	if config.ParseKey(key) != nil {
+		return false
+	}
 
 	currentOtp := config.TOTP()
 

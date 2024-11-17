@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"time"
@@ -34,19 +35,19 @@ type User struct {
 	Expires  time.Time `json:"expires"`
 }
 
-func GetUser(c *gin.Context) (User, bool) {
+func GetUser(c *gin.Context) (*User, bool) {
 	if isAuthenticated := c.GetBool("IsAuthenticated"); isAuthenticated {
 		user, _ := c.Get("User")
 
-		return user.(User), isAuthenticated
+		return user.(*User), isAuthenticated
 	}
 
-	return User{}, false
+	return nil, false
 }
 
 var secret, _ = os.LookupEnv("SECRET")
 
-func GenerateJwtToken(user models.User) (string, error) {
+func GenerateJwtToken(user *models.User) (string, error) {
 	roles := []string{}
 	for _, userRole := range user.UserRoles {
 		roles = append(roles, userRole.Role.Name)
@@ -62,27 +63,25 @@ func GenerateJwtToken(user models.User) (string, error) {
 	return claims.SignedString(([]byte(secret)))
 }
 
-func ParseJwtToken(authHeader string) (User, bool) {
+func ParseJwtToken(authHeader string) (*User, error) {
 	if !strings.HasPrefix(authHeader, "Bearer ") {
-		return User{}, false
+		return nil, errors.New("Not Found")
 	}
 
 	token, err := jwt.Parse(strings.TrimPrefix(authHeader, "Bearer "), func(t *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
-
 	if err != nil {
-		return User{}, false
+		return nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-
 	if !ok || !token.Valid {
-		return User{}, false
+		return nil, errors.New("parse error")
 	}
 
 	if exp, err := claims.GetExpirationTime(); err != nil || exp.Before(time.Now()) {
-		return User{}, false
+		return nil, errors.New("jwt is expired")
 	}
 
 	roles := []string{}
@@ -100,5 +99,5 @@ func ParseJwtToken(authHeader string) (User, bool) {
 		Expires:  time.Unix(int64(claims["exp"].(float64)), 0),
 	}
 
-	return user, true
+	return &user, nil
 }

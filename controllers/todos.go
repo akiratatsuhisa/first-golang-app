@@ -16,7 +16,7 @@ func GetTodos(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, todos)
+	c.JSON(http.StatusOK, &todos)
 }
 
 func CreateTodo(c *gin.Context) {
@@ -32,7 +32,7 @@ func CreateTodo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, todo)
+	c.JSON(http.StatusCreated, &todo)
 }
 
 func GetTodo(c *gin.Context) {
@@ -44,7 +44,7 @@ func GetTodo(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
-	c.JSON(http.StatusOK, todo)
+	c.JSON(http.StatusOK, &todo)
 }
 
 func UpdateTodo(c *gin.Context) {

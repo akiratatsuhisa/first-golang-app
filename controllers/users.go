@@ -33,7 +33,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusCreated, &gin.H{
 		"Username": user.Username,
 	})
 }
@@ -61,14 +61,14 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateJwtToken(user)
+	token, err := auth.GenerateJwtToken(&user)
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusCreated, &gin.H{
 		"accessToken": token,
 	})
 }
@@ -76,7 +76,7 @@ func Login(c *gin.Context) {
 func Profile(c *gin.Context) {
 	user, _ := auth.GetUser(c)
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, &user)
 }
 
 func GenerateTotpKey(c *gin.Context) {
@@ -84,7 +84,7 @@ func GenerateTotpKey(c *gin.Context) {
 
 	uri, key := otp.GenerateUri(user.Username)
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, &gin.H{
 		"Uri": uri,
 		"Key": key,
 	})
@@ -105,7 +105,7 @@ func SetTotpKey(c *gin.Context) {
 	}
 
 	if c.Bind(&body) != nil || body.Key == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadRequest, &gin.H{
 			"Message": "Missing key",
 		})
 		return
@@ -118,7 +118,7 @@ func SetTotpKey(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, &gin.H{
 		"Message": "OK",
 	})
 }
@@ -138,7 +138,7 @@ func ComapareTotp(c *gin.Context) {
 	}
 
 	if c.Bind(&body) != nil || body.Otp == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadRequest, &gin.H{
 			"Message": "Missing otp",
 		})
 		return
@@ -149,7 +149,7 @@ func ComapareTotp(c *gin.Context) {
 		message = "Yes"
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, &gin.H{
 		"Message": message,
 	})
 }
