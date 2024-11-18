@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func PubSub(pubSub *pubsub.MongoPubSub) gin.HandlerFunc {
+func PubSub(ps *pubsub.MongoPubSub) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("PubSub", pubSub)
+		c.Set("PubSub", ps)
 
 		c.Next()
 	}

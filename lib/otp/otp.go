@@ -9,7 +9,7 @@ import (
 	"github.com/creachadair/otp/otpauth"
 )
 
-var digits int = 8
+const digits int = 8
 
 func GenerateUri(username string) (string, string) {
 	issuer := "App"
